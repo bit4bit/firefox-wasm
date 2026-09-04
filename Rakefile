@@ -176,6 +176,17 @@ namespace :dev do
 
     puts "==> Down. Run `rake dev:up` to start again."
   end
+
+  desc "Delete the whole development environment (VM + engine build inside it)"
+  task :destroy do
+    puts "==> Stopping the ssh tunnel"
+    system("pkill", "-f", "#{HOST_PORT}:localhost:#{GUEST_PORT}", %i[out err] => File::NULL)
+
+    puts "==> Destroying the VM (this deletes the engine build inside it)"
+    abort("!! vagrant destroy failed") unless system("vagrant", "destroy", "-f")
+
+    puts "==> Destroyed. Run `rake dev:up` to recreate from scratch (~45 min first build)."
+  end
 end
 
 task default: "dev:up"
